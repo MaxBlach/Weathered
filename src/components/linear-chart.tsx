@@ -1,6 +1,5 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 const { DateTime } = require("luxon");
 
@@ -34,16 +33,16 @@ const chartConfig = {
     temp: {
         label: "Température",
         color: "hsl(var(--chart-1))",
-        icon: TrendingUp
     }
 } satisfies ChartConfig
 
 export function LinearChart({ forecast }) {
     console.log(forecast)
+    const date = DateTime.fromFormat(forecast.date, 'yyyy-MM-dd')
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Temperature par heure par jour</CardTitle>
+                <CardTitle>{date.toLocaleString(DateTime.DATE_HUGE)}</CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
@@ -61,7 +60,7 @@ export function LinearChart({ forecast }) {
                             tickLine={true}
                             axisLine={true}
                             tickMargin={8}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tickFormatter={(value) => value.slice(0, 3) + "h"}
                         />
                         <YAxis />
                         <ChartTooltip

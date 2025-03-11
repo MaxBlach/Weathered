@@ -15,6 +15,7 @@ const parseWeather = (weather) => {
         now: {
             condition: current.condition.text,
             icon: current.condition.icon,
+            code: current.condition.code,
             temp_c: current.temp_c,
             wind_kph: current.wind_kph,
             wind_dir: current.wind_dir
@@ -29,6 +30,7 @@ const parseHourForecast = (hour) => {
         temp_c: hour.temp_c,
         condition: hour.condition.text,
         icon: hour.condition.icon,
+        code: hour.condition.code,
         is_day: !!hour.is_day
     }
 }

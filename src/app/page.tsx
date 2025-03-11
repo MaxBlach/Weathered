@@ -12,8 +12,9 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Card, CardHeader, CardDescription, CardTitle, CardContent } from '@/components/ui/card';
-import { useState } from 'react';
+import { Key, useState } from 'react';
 import { LinearChart } from '@/components/linear-chart';
+import { getWeatherIcon } from '@/lib/get-weather-icon';
 
 const callApi = async (city: string, lang: string) => {
   const reponse = await fetch(`api/weather?city=${city}&lang=${lang}`).then(res => res.json());
@@ -22,7 +23,7 @@ const callApi = async (city: string, lang: string) => {
 
 export default function Home() {
   const [city, setCity] = useState('');
-  const [lang, setLang] = useState('fr');
+  const [lang, setLang] = useState('en');
   const [weather, setWeather] = useState(null);
 
   const handleSearch = async () => {
@@ -48,26 +49,35 @@ export default function Home() {
           </Button>
         </div>
         {weather &&
-          <div>
+          <div className='flex items-center justify-center gap-5'>
             <div className='flex flex-col justify-center items-center'>
-              <Card className='m-8 bg-slate-50'>
+              <Card className='m-10 bg-slate-50'>
                 <CardHeader>
                   <CardTitle>{weather.city.name}</CardTitle>
                   <CardDescription>{weather.city.region}, {weather.city.country}</CardDescription>
                 </CardHeader>
                 <CardContent className='flex flex-col justify-center items-center'>
                   <p className='font-bold text-6xl'>{weather.now.temp_c}</p>
-                  <Image
-                    src={'https:' + weather.now.icon}
-                    width={250}
-                    height={250}
-                    alt={weather.now.condition}
-                  />
+                  {getWeatherIcon(weather.now.code)}
                   <p className='text-xl'>{weather.now.condition}</p>
                 </CardContent>
               </Card>
             </div>
-            <LinearChart forecast={weather.forecast[0]} />
+            <div className='flex justify-center items-center'>
+              <Carousel className="w-full max-w-screen-sm">
+                <CarouselContent>
+                  {weather.forecast.map((_, index: number) => (
+                    <CarouselItem key={index}>
+                      <div className="p-1">
+                        <LinearChart forecast={weather.forecast[index]} />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
           </div>
         }
       </div >
