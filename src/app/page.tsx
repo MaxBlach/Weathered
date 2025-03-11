@@ -4,17 +4,12 @@ import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 import { Card, CardHeader, CardDescription, CardTitle, CardContent } from '@/components/ui/card';
-import { Key, useState } from 'react';
+import { useState } from 'react';
 import { LinearChart } from '@/components/linear-chart';
 import { getWeatherIcon } from '@/lib/get-weather-icon';
+import { WiWindDeg } from "weather-icons-react";
+const { DateTime } = require("luxon");
 
 const callApi = async (city: string, lang: string) => {
   const reponse = await fetch(`api/weather?city=${city}&lang=${lang}`).then(res => res.json());
@@ -39,46 +34,38 @@ export default function Home() {
             onChange={e => setCity(e.target.value)}
             className='w-1/2 border-neutral-400'
           />
-          <Button className='relative' variant='search' size='icon' onClick={handleSearch}>
-            <Image
-              src={'/search-icon.svg'}
-              alt="Picture of the author"
-              width={28}
-              height={28}
-            />
-          </Button>
+          <Button onClick={handleSearch}>Submit</Button>
         </div>
         {weather &&
-          <div className='flex items-center justify-center gap-5'>
-            <div className='flex flex-col justify-center items-center'>
-              <Card className='m-10 bg-slate-50'>
-                <CardHeader>
-                  <CardTitle>{weather.city.name}</CardTitle>
-                  <CardDescription>{weather.city.region}, {weather.city.country}</CardDescription>
-                </CardHeader>
-                <CardContent className='flex flex-col justify-center items-center'>
-                  <p className='font-bold text-6xl'>{weather.now.temp_c}</p>
-                  {getWeatherIcon(weather.now.code)}
-                  <p className='text-xl'>{weather.now.condition}</p>
-                </CardContent>
-              </Card>
-            </div>
-            <div className='flex justify-center items-center'>
-              <Carousel className="w-full max-w-screen-sm">
-                <CarouselContent>
-                  {weather.forecast.map((_, index: number) => (
-                    <CarouselItem key={index}>
-                      <div className="p-1">
-                        <LinearChart forecast={weather.forecast[index]} />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            </div>
-          </div>
+          <Card>
+            <CardHeader>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <Image
+                    src={'https:' + weather.now.icon}
+                    width={150}
+                    height={150}
+                    alt={weather.now.condition}
+                  />
+                  <p className='text-xl'>{weather.now.temp_c} °C</p>
+                  <div>
+                    <p>Précipitations: {weather.now.precip_mm}%</p>
+                    <p>Humidité: {weather.now.humidity}%</p>
+                    <p className='flex items-center'>Vent: {weather.now.wind_kph} km/h | <WiWindDeg /> {weather.now.wind_dir}</p>
+                  </div>
+                </div>
+                <div className='flex flex-col items-center gap-2'>
+                  <p className='font-bold'>Weather</p>
+                  <p>{weather.city.name}, {weather.city.region}, {weather.city.country}</p>
+                  <p>{DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}</p>
+                  <p>{weather.now.condition}</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <LinearChart forecast={weather.forecast[0]} />
+            </CardContent>
+          </Card>
         }
       </div >
     </>

@@ -18,7 +18,9 @@ const parseWeather = (weather) => {
             code: current.condition.code,
             temp_c: current.temp_c,
             wind_kph: current.wind_kph,
-            wind_dir: current.wind_dir
+            wind_dir: current.wind_dir,
+            precip_mm: current.precip_mm,
+            humidity: current.humidity,
         },
         forecast: forecast.forecastday.map(f => parseDayForecast(f))
     }
